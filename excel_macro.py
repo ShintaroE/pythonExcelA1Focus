@@ -7,17 +7,14 @@ def add_macro_to_excel(file_path):
         # Excelアプリケーションを非表示で起動
         app = xw.App(visible=False)
 
-        # ファイルが .xlsm でない場合、最初に .xlsm ファイルに変換してコピーを作成
-        if not file_path.endswith('.xlsm'):
-            new_file_path = os.path.splitext(file_path)[0] + '_with_macro.xlsm'
-            # Excelファイルを開いて .xlsm として保存
-            wb = app.books.open(file_path)
-            wb.save(new_file_path)
-            wb.close()
-            print(f'ファイルを {new_file_path} に変換しました。')
-            file_path = new_file_path  # 新しいファイルパスに切り替え
-        else:
-            new_file_path = file_path
+        # 最初に .xlsm ファイルに変換してコピーを作成
+        new_file_path = os.path.splitext(file_path)[0] + '_with_A1CellMacro.xlsm'
+        # Excelファイルを開いて .xlsm として保存
+        wb = app.books.open(file_path)
+        wb.save(new_file_path)
+        wb.close()
+        print(f'ファイルを {new_file_path} に変換しました。')
+
 
         # 変換後、または .xlsm のファイルを開く
         wb = app.books.open(new_file_path)
@@ -46,6 +43,19 @@ def add_macro_to_excel(file_path):
         End Sub
         '''
         vba_module.CodeModule.AddFromString(macro_code)
+
+        # ThisWorkbookモジュールを取得
+        thisworkbook = wb.api.VBProject.VBComponents("ThisWorkbook")
+
+        # VBAコードを追加
+        vba_code = '''
+        Private Sub Workbook_Open()
+            Call A1move
+        End Sub
+        '''
+        
+        # VBAコードをThisWorkbookに挿入
+        thisworkbook.CodeModule.AddFromString(vba_code)
 
         # マクロ付きのファイルを保存
         wb.save()

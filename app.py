@@ -35,7 +35,7 @@ def exit_app():
 
 # アプリケーションのウィンドウ設定
 root = TkinterDnD.Tk()  # TkinterDnD2を使用
-root.title("Excelファイル変換ツール")
+root.title("ExcelファイルA1セルフォーカス")
 root.geometry("400x250")
 
 excel_file = None
@@ -64,7 +64,7 @@ label = tk.Label(root, text="ここにExcelファイルをドラッグ＆ドロ�
 label.pack(pady=10)
 
 # 変換ボタン
-convert_button = tk.Button(root, text="実行", command=convert_file)
+convert_button = tk.Button(root, text="実行", width=20, height=7 , command=convert_file)
 convert_button.pack()
 
 root.mainloop()
